@@ -156,6 +156,9 @@ public class SMSAutoReplyActivity extends Activity
 			break;
 		case R.id.item2:
 			break;
+			
+		case R.id.item3:
+			break;
 
 		default:
 			break;

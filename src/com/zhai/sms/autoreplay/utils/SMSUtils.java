@@ -14,6 +14,7 @@ public class SMSUtils
 	public static void sendSMS(Context mcontext, String phoneNumber,
 			String message)
 	{
+		
 		String SENT = "SMS_SENT";
 		String DELIVERED = "SMS_DELIVERED";
 		final Context context = mcontext;

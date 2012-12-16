@@ -17,6 +17,7 @@ import com.zhai.sms.autoreplay.db.SMSDBHelper;
 import com.zhai.sms.autoreplay.db.SMSSettingDBHelper;
 import com.zhai.sms.autoreplay.model.SMSObject;
 import com.zhai.sms.autoreplay.model.SMSSetObject;
+import com.zhai.sms.autoreplay.utils.SMSUtils;
 
 public class SMSBroadcastReceiver extends BroadcastReceiver
 {
@@ -56,12 +57,19 @@ public class SMSBroadcastReceiver extends BroadcastReceiver
 				}
 
 				List<SMSSetObject> settings = SMSSettingDBHelper.getInstance(
-						context).getSMSSettingObjects(tel);
+						context).getAllSMSSettingObjects();
 
 				for (SMSSetObject object : settings)
 				{
 					Log.w(tag, "@@zhai:setting:" + object.number + " "
 							+ object.replyContent);
+
+					if (tel.contains(object.number)
+							&& message.toString().contains(object.keyWord))
+					{
+						SMSUtils.sendSMS(context, object.number,
+								object.replyContent);
+					}
 				}
 
 				SMSObject smsObject = new SMSObject();

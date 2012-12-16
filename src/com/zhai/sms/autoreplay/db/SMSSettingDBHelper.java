@@ -124,9 +124,9 @@ public class SMSSettingDBHelper extends SQLiteOpenHelper
 		sqLiteDatabase = getWritableDatabase();
 		List<SMSSetObject> smsList = new ArrayList<SMSSetObject>();
 		String sqlString = "select * from " + TABLE_NAME
-				+ " where number=? or number=''";
+				+ " where number like ? or number=''";
 		Cursor c = sqLiteDatabase.rawQuery(sqlString, new String[]
-		{num});
+		{"%"+num+"%"});
 		while (c.moveToNext())
 		{
 			SMSSetObject smsObject = new SMSSetObject();

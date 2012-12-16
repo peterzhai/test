@@ -19,6 +19,7 @@ public final class R {
         public static final int isreply_tv=0x7f06000d;
         public static final int item1=0x7f06000e;
         public static final int item2=0x7f06000f;
+        public static final int item3=0x7f060010;
         public static final int key_editText=0x7f060005;
         public static final int key_id_tv=0x7f060004;
         public static final int linearLayout1=0x7f060000;

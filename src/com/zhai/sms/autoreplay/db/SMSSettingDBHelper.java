@@ -48,10 +48,10 @@ public class SMSSettingDBHelper extends SQLiteOpenHelper
 		// id number key content replyContent
 		db.execSQL("CREATE TABLE IF NOT EXISTS "
 				+ TABLE_NAME2
-				+ "(_id INTEGER PRIMARY KEY AUTOINCREMENT,smsId INTEGER, number VARCHAR,content TEXT,replyContent TEXT,isReply BOOLEAN,receivedTime TIMESTAMP,replyTime TIMESTAMP)");
+				+ "(_id INTEGER PRIMARY KEY AUTOINCREMENT,smsId INTEGER, number VARCHAR,content TEXT,replyContent TEXT,isReply INTEGER,receivedTime TIMESTAMP,replyTime TIMESTAMP)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS "
 				+ TABLE_NAME
-				+ "(_id INTEGER PRIMARY KEY AUTOINCREMENT, number VARCHAR,keyWord VARCHAR,replyContent TEXT)");
+				+ "(_id INTEGER PRIMARY KEY AUTOINCREMENT, number VARCHAR,keyWord VARCHAR,replyContent TEXT,isUse INTEGER)");
 
 	}
 
@@ -70,8 +70,8 @@ public class SMSSettingDBHelper extends SQLiteOpenHelper
 		{
 
 			sqLiteDatabase.execSQL("INSERT INTO " + TABLE_NAME
-					+ " VALUES(null,?,?,?)", new Object[]
-			{smsObject.number, smsObject.keyWord, smsObject.replyContent});
+					+ " VALUES(null,?,?,?,?)", new Object[]
+			{smsObject.number, smsObject.keyWord, smsObject.replyContent, "1"});
 
 			sqLiteDatabase.setTransactionSuccessful(); // 设置事务成功完成
 		} finally
@@ -91,6 +91,14 @@ public class SMSSettingDBHelper extends SQLiteOpenHelper
 		values.put("keyWord", smsObject.keyWord);
 		values.put("number", smsObject.number);
 		values.put("replyContent", smsObject.replyContent);
+		if (smsObject.isUse)
+		{
+			values.put("isUse", 1);
+		} else
+		{
+			values.put("isUse", 0);
+		}
+
 		sqLiteDatabase.update(TABLE_NAME, values, "_id=?", new String[]
 		{String.valueOf(smsObject.id)});
 
@@ -111,6 +119,16 @@ public class SMSSettingDBHelper extends SQLiteOpenHelper
 			smsObject.keyWord = c.getString(c.getColumnIndex("keyWord"));
 			smsObject.replyContent = c.getString(c
 					.getColumnIndex("replyContent"));
+			int use = c.getInt(c.getColumnIndex("isUse"));
+			if (use == 0)
+			{
+				smsObject.isUse = false;
+			} else
+			{
+				smsObject.isUse = true;
+			}
+
+			Log.w("SMSSettingDBHelper", "@@zhai:isUse:" + smsObject.isUse);
 
 			smsList.add(smsObject);
 		}
@@ -126,7 +144,7 @@ public class SMSSettingDBHelper extends SQLiteOpenHelper
 		String sqlString = "select * from " + TABLE_NAME
 				+ " where number like ? or number=''";
 		Cursor c = sqLiteDatabase.rawQuery(sqlString, new String[]
-		{"%"+num+"%"});
+		{"%" + num + "%"});
 		while (c.moveToNext())
 		{
 			SMSSetObject smsObject = new SMSSetObject();

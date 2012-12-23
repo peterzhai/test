@@ -11,4 +11,5 @@ public class SMSSetObject implements Serializable
 	public String number;
 	public String keyWord;
 	public String replyContent;
+	public boolean isUse;
 }

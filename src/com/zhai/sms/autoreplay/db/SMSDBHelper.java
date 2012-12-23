@@ -51,7 +51,7 @@ public class SMSDBHelper extends SQLiteOpenHelper
 				+ "(_id INTEGER PRIMARY KEY AUTOINCREMENT,smsId INTEGER, number VARCHAR,content TEXT,replyContent TEXT,isReply BOOLEAN,receivedTime TIMESTAMP,replyTime TIMESTAMP)");
 		db.execSQL("CREATE TABLE IF NOT EXISTS "
 				+ TABLE_NAME2
-				+ "(_id INTEGER PRIMARY KEY AUTOINCREMENT, number VARCHAR,keyWord VARCHAR,replyContent TEXT)");
+				+ "(_id INTEGER PRIMARY KEY AUTOINCREMENT, number VARCHAR,keyWord VARCHAR,replyContent TEXT,isUse INTEGER)");
 	}
 
 	@Override

@@ -14,15 +14,14 @@ public class SMSUtils
 	public static void sendSMS(Context mcontext, String phoneNumber,
 			String message)
 	{
-		String SENT = "SMS_SENT";
-		String DELIVERED = "SMS_DELIVERED";
 		final Context context = mcontext;
 
-		PendingIntent sentPI = PendingIntent.getBroadcast(context, 0,
-				new Intent(SENT), 0);
+		PendingIntent sentPI = PendingIntent.getBroadcast(
+				context.getApplicationContext(), 0, new Intent(Constant.SENT),
+				0);
 
-		PendingIntent deliveredPI = PendingIntent.getBroadcast(context, 0,
-				new Intent(DELIVERED), 0);
+		PendingIntent deliveredPI = PendingIntent.getBroadcast(context
+				.getApplicationContext(), 0, new Intent(Constant.DELIVERED), 0);
 
 		// ---when the SMS has been sent---
 		// context.registerReceiver(new BroadcastReceiver()
@@ -54,9 +53,9 @@ public class SMSUtils
 		// break;
 		// }
 		// }
-		// }, new IntentFilter(SENT));
-
-		// ---when the SMS has been delivered---
+		// }, new IntentFilter(Constant.SENT));
+		//
+		// // ---when the SMS has been delivered---
 		// context.registerReceiver(new BroadcastReceiver()
 		// {
 		// @Override
@@ -74,10 +73,9 @@ public class SMSUtils
 		// break;
 		// }
 		// }
-		// }, new IntentFilter(DELIVERED));
+		// }, new IntentFilter(Constant.DELIVERED));
 
 		SmsManager sms = SmsManager.getDefault();
 		sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
 	}
-
 }

@@ -2,4 +2,6 @@
 <resources>
     <string name="hello">Hello World, SMSAutoReplyActivity!</string>
     <string name="app_name">SMSAutoReply</string>
+    <string name="send_success">已发出!</string>
+    <string name="deliver_success">已发送成功！</string>
 </resources>

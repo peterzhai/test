@@ -6,10 +6,17 @@ import org.w3c.dom.Text;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,10 +31,23 @@ import com.zhai.sms.autoreplay.db.SMSDBHelper;
 import com.zhai.sms.autoreplay.db.SMSSettingDBHelper;
 import com.zhai.sms.autoreplay.model.SMSObject;
 import com.zhai.sms.autoreplay.model.SMSSetObject;
+import com.zhai.sms.autoreplay.receiver.SMSBroadcastReceiver;
+import com.zhai.sms.autoreplay.utils.Constant;
 
 public class SMSAutoReplyActivity extends Activity
 {
 	private ListView mListView;
+	private SMSBroadCast mBroadcastReceiver;
+
+	Handler mHandler = new Handler()
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			Log.w("SMSAuto", "@@zhai:hand message!");
+			initListView();
+		}
+	};
 
 	/** Called when the activity is first created. */
 	@Override
@@ -44,45 +64,39 @@ public class SMSAutoReplyActivity extends Activity
 
 		mListView = (ListView) findViewById(R.id.listView);
 
-		final SMSDBHelper smsdbHelper = new SMSDBHelper(this);
-		SMSSettingDBHelper smsSettingDBHelper = new SMSSettingDBHelper(this);
-		// SMSObject smsObject = new SMSObject();
-		// smsObject.content = "sdm sdm sdm sdm ";
-		// smsObject.replyTime = new Date().toLocaleString();
-		// smsdbHelper.insert(smsObject);
+		initListView();
+		
+		mBroadcastReceiver = new SMSBroadCast();
+		
+		registerReceiver(mBroadcastReceiver, new IntentFilter(Constant.INSERT_FRESH));
 
-		List<SMSObject> list = smsdbHelper.getAllSmsObjects();
+	}
+
+	private void initListView()
+	{
+
+		Log.w("SMSAuto", "@@zhai:init listview!");
+		List<SMSObject> list = SMSDBHelper.getInstance(this).getAllSmsObjects();
 
 		SMSAdapter adapter = new SMSAdapter(this);
 		adapter.setList(list);
 
 		mListView.setAdapter(adapter);
+	}
 
-//		String number = "1892751052445";
-//		String content = "顶顶";
-//		String key="顶";
-//		SMSSetObject smsSetObject = new SMSSetObject();
-//		smsSetObject.number = number.trim();
-//		smsSetObject.keyWord = key;
-//		smsSetObject.replyContent = content;
-//		SMSSettingDBHelper.getInstance(SMSAutoReplyActivity.this).insert(
-//				smsSetObject);
+	class SMSBroadCast extends BroadcastReceiver
+	{
 
-		//
-		// new Thread()
-		// {
-		// public void run()
-		// {
-		// List<SMSObject> list = smsdbHelper.getAllSmsObjects();
-		//
-		// for (int i = 0; i < list.size(); i++)
-		// {
-		// Log.w("DBHelper", "@@zhai:list:" + i + list.get(i).content
-		// + "-" + list.get(i).replyTime);
-		//
-		// }
-		// };
-		// }.start();
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			Log.w("SMSAuto", "@@zhai:onReceive:"+intent.getAction());
+			if (intent.getAction().equals(Constant.INSERT_FRESH))
+			{
+				mHandler.sendEmptyMessage(0);
+			}
+
+		}
 
 	}
 
@@ -156,14 +170,27 @@ public class SMSAutoReplyActivity extends Activity
 			break;
 		case R.id.item2:
 			break;
-			
+
 		case R.id.item3:
+			Intent intent = new Intent(this, SMSSettingList.class);
+			startActivity(intent);
 			break;
 
 		default:
 			break;
 		}
 		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		if (mBroadcastReceiver!=null)
+		{
+			unregisterReceiver(mBroadcastReceiver);
+		}
+		
+		super.onDestroy();
 	}
 
 }
